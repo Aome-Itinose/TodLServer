@@ -1,4 +1,4 @@
-package org.aome.todlserver.util;
+package org.aome.todlserver.util.validators;
 
 import lombok.RequiredArgsConstructor;
 import org.aome.todlserver.models.User;

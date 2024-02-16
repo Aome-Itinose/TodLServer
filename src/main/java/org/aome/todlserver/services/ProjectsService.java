@@ -12,7 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,37 +23,45 @@ public class ProjectsService {
 
     @Transactional
     public void createNewProject(Project project) {
-        projectsRepository.save(enrich(project));
+
+        UsersDetails usersDetails = (UsersDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User creatUser = usersService.findByUsername(usersDetails.getUsername());
+
+        creatUser.setRole("ROLE_TEAMLEAD");
+        projectsRepository.save(enrich(project, creatUser));
     }
 
-    public List<Project> findAllByName(String name) {
-        List<Project> projects = projectsRepository.findAllByName(name);
-        if (projects.isEmpty()) {
-            throw new ProjectNotFoundException();
+    public boolean projectExist(String name){
+        try{
+            findByName(name);
+        }catch (ProjectNotFoundException e){
+            return false;
         }
-        return projects;
+        return true;
     }
 
-    public Project findByNameAndDescription(String name, String description) {
-        return projectsRepository.findByNameAndDescription(name, description).orElseThrow(ProjectNotFoundException::new);
+    public Project findByName(String name){
+        return projectsRepository.findByName(name).orElseThrow(ProjectNotFoundException::new);
     }
 
     @Transactional
     public void setTeamlead(Project editProject, User newUser) {
         if (usersService.userExist(newUser.getUsername())) {
             newUser = usersService.findByUsername(newUser.getUsername());
-            if (newUser.getRole().equals("ROLE_ADMIN")) {
+            if (newUser.getRole().equals("ROLE_SENIOR")) {
                 try {
-
-                    Project project = findByNameAndDescription(editProject.getName(), editProject.getDescription());
+                    Project project = findByName(editProject.getName());
 
                     UsersDetails currentUsersDetails = (UsersDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
                     User currentUser = usersService.findByUsername(currentUsersDetails.getUsername());
 
-                    if (project.getTeamLead().equals(currentUser)) {
+                    if (project.getTeamLead().getUsername().equals(currentUser.getUsername())) {
                         if (newUser.getMyProject() == null) {
                             newUser.setMyProject(project);
                             project.setTeamLead(newUser);
+
+                            newUser.setRole("ROLE_TEAMLEAD");
+                            currentUser.setRole("ROLE_SENIOR");
 
                             project.getDevelopers().add(newUser);
                         } else {
@@ -87,12 +94,11 @@ public class ProjectsService {
             throw new ProjectEditException(String.format("%s already is in %s", usersDetails.getUsername(), project.getName()));
         }
     }
-    private Project enrich(Project project) {
-        project.setStatus("planned");
-        project.setDescription(" ");
-        UsersDetails usersDetails = (UsersDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        project.setTeamLead(usersDetails.getUser());
+    private Project enrich(Project project, User creatUser) {
+        project.setStatus("Planned");
+        project.setTeamLead(creatUser);
 
+        creatUser.getProjects().add(project);
         return project;
     }
 }

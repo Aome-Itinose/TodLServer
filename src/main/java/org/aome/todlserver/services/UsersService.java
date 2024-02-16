@@ -30,8 +30,8 @@ public class UsersService {
     }
 
     @Transactional
-    public void setAdmin(User user) throws UserNotFoundException{
-        usersRepository.findByUsername(user.getUsername()).orElseThrow(UserNotFoundException::new).setRole("ROLE_ADMIN");
+    public void setRoleSenior(User user) throws UserNotFoundException{
+        usersRepository.findByUsername(user.getUsername()).orElseThrow(UserNotFoundException::new).setRole("ROLE_SENIOR");
     }
 
     private User enrich(User user){

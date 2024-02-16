@@ -15,7 +15,6 @@ public class ProjectDTO {
 
     private String description;
 
-    //TODO: status may be only "planned", "in progress", "completed"
     private String status;
 
     private List<Task> tasks;

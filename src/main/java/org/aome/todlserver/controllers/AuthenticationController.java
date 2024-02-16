@@ -7,7 +7,7 @@ import org.aome.todlserver.dto.RegistrationDTO;
 import org.aome.todlserver.models.User;
 import org.aome.todlserver.security.JWTUtil;
 import org.aome.todlserver.services.UsersService;
-import org.aome.todlserver.util.UserValidator;
+import org.aome.todlserver.util.validators.UserValidator;
 import org.aome.todlserver.util.exceptions.responses.ExceptionResponse;
 import org.aome.todlserver.util.exceptions.responses.AuthResponse;
 import org.aome.todlserver.util.exceptions.UserNotCreateException;
