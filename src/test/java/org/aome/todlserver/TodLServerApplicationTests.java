@@ -1,0 +1,13 @@
+package org.aome.todlserver;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class TodLServerApplicationTests {
+
+    @Test
+    void contextLoads() {
+    }
+
+}
