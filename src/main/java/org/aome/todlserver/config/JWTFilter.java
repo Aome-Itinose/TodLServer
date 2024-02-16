@@ -36,8 +36,8 @@ public class JWTFilter extends OncePerRequestFilter {
                     if (SecurityContextHolder.getContext().getAuthentication() == null) {
                         SecurityContextHolder.getContext().setAuthentication(authToken);
                     }
-                } catch (JWTVerificationException ignored) {
-                    ignored.printStackTrace();
+                } catch (JWTVerificationException e) {
+                    e.printStackTrace();
                 }
             }
         }

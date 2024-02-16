@@ -1,6 +1,5 @@
 package org.aome.todlserver.services;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.aome.todlserver.models.User;
 import org.aome.todlserver.repositories.UsersRepository;
