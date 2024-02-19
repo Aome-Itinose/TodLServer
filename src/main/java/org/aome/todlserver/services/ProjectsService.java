@@ -21,6 +21,7 @@ public class ProjectsService {
 
     private final UsersService usersService;
 
+
     @Transactional
     public void createNewProject(Project project) {
 
@@ -81,7 +82,7 @@ public class ProjectsService {
         }
     }
 
-    @Transactional
+    @Transactional //Todo
     public void addUser(User user){
         UsersDetails usersDetails = (UsersDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Project project = usersService.findByUsername(usersDetails.getUsername()).getMyProject();
@@ -93,6 +94,22 @@ public class ProjectsService {
         }else{
             throw new ProjectEditException(String.format("%s already is in %s", usersDetails.getUsername(), project.getName()));
         }
+    }
+
+    @Transactional
+    public void deleteUserFromProject(User user, Project project){
+        project = findByName(project.getName());
+        user = usersService.findByUsername(user.getUsername());
+        if(user.getMyProject()==null) {
+            project.getDevelopers().remove(user);
+        }else{
+            throw new ProjectEditException(String.format("%s is teamlead.", user.getUsername()));
+        }
+    }
+
+    @Transactional
+    public void editProjectName(Project currentProject, Project newProject){
+        findByName(currentProject.getName()).setName(newProject.getName());
     }
     private Project enrich(Project project, User creatUser) {
         project.setStatus("Planned");

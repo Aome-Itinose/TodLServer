@@ -19,7 +19,6 @@ public class TaskDTO {
 
     private String description;
 
-    //TODO: priority may be only 1,2,3,4
     private int priority;
 
     private LocalDateTime expirationAt;
