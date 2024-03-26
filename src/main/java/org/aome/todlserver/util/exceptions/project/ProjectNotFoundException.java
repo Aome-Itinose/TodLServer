@@ -1,4 +1,4 @@
-package org.aome.todlserver.util.exceptions;
+package org.aome.todlserver.util.exceptions.project;
 
 public class ProjectNotFoundException extends RuntimeException{
     public ProjectNotFoundException() {

@@ -19,11 +19,11 @@ public class UserDTO {
     @Size(min = 2, max = 100, message = "Username length should be between 2 and 100")
     private String username;
 
-    private String password;
-
     private String gmail;
 
     private String role;
 
     private List<Task> tasks;
+
+    private List<ProjectDTO> projects;
 }

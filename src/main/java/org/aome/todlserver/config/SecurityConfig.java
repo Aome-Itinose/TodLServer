@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -21,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final UsersDetailService usersDetailService;
     private final JWTFilter jwtFilter;
+    private final FilterChainExceptionHandler filterChainExceptionHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -32,15 +34,17 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/login", "/registration").permitAll()
+                        .requestMatchers("/login", "/registration", "/some").permitAll()
                         .requestMatchers("/admin/**").hasRole("SENIOR")
                         .requestMatchers("/projects/**").hasRole("TEAMLEAD")
-                        .anyRequest().hasAnyRole("SENIOR", "USER")
+                        .anyRequest().hasAnyRole("SENIOR", "USER", "TEAMLEAD")
                 )
                 .sessionManagement(sm -> sm
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .addFilterBefore(filterChainExceptionHandler, LogoutFilter.class)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
 
         return http.build();
     }

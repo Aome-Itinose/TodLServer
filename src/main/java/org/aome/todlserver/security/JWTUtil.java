@@ -17,6 +17,8 @@ public class JWTUtil {
     private String tokenSecret;
     @Value("${expirationMinutes}")
     private Integer minutes;
+    @Value("${issuer}")
+    private String issuer;
     private final String subject = "User details";
     public String generateToken(String username){
         Date expirationDate = Date.from(ZonedDateTime.now().plusMinutes(minutes).toInstant());
@@ -24,7 +26,7 @@ public class JWTUtil {
         return JWT.create()
                 .withSubject(subject)
                 .withClaim("username", username)
-                .withIssuer("TodL")
+                .withIssuer(issuer)
                 .withIssuedAt(new Date())
                 .withExpiresAt(expirationDate)
                 .sign(Algorithm.HMAC256(tokenSecret));
@@ -33,7 +35,7 @@ public class JWTUtil {
     public String validateTokenAndRetrievedClaim(String token) throws JWTVerificationException {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(tokenSecret))
                 .withSubject(subject)
-                .withIssuer("TodL")
+                .withIssuer(issuer)
                 .build();
         DecodedJWT jwt = verifier.verify(token);
         return jwt.getClaim("username").asString();

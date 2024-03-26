@@ -1,4 +1,4 @@
-package org.aome.todlserver.util.exceptions.responses;
+package org.aome.todlserver.util.responses;
 
 import lombok.Data;
 

@@ -10,6 +10,7 @@ import java.util.List;
 @Data
 @Component
 public class ProjectDTO {
+    private int id;
     @NotBlank(message = "Name should be not empty")
     private String name;
 

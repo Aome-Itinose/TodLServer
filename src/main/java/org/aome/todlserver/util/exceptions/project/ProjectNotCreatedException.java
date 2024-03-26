@@ -1,4 +1,4 @@
-package org.aome.todlserver.util.exceptions;
+package org.aome.todlserver.util.exceptions.project;
 
 public class ProjectNotCreatedException extends RuntimeException{
     public ProjectNotCreatedException(String msg){

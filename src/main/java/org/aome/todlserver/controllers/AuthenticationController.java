@@ -7,11 +7,10 @@ import org.aome.todlserver.dto.RegistrationDTO;
 import org.aome.todlserver.models.User;
 import org.aome.todlserver.security.JWTUtil;
 import org.aome.todlserver.services.UsersService;
+import org.aome.todlserver.util.Converter;
 import org.aome.todlserver.util.validators.UserValidator;
-import org.aome.todlserver.util.exceptions.responses.ExceptionResponse;
-import org.aome.todlserver.util.exceptions.responses.AuthResponse;
-import org.aome.todlserver.util.exceptions.UserNotCreateException;
-import org.modelmapper.ModelMapper;
+import org.aome.todlserver.util.responses.AuthResponse;
+import org.aome.todlserver.util.exceptions.user.UserNotCreateException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,11 +31,17 @@ public class AuthenticationController {
     private final JWTUtil jwtUtil;
     private final UserValidator userValidator;
     private final AuthenticationManager authProvider;
-    private final ModelMapper modelMapper;
+    private final Converter converter;
 
+
+    @GetMapping("/some")
+    public ResponseEntity<AuthResponse> some(){
+        AuthResponse response = new AuthResponse("Account created.", "ss", new Date());
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
     @PostMapping("/registration")
     public ResponseEntity<AuthResponse> performRegistration(@RequestBody @Valid RegistrationDTO registrationDTO, BindingResult bindingResult){
-        User newUser = convertToUser(registrationDTO);
+        User newUser = converter.convertToUser(registrationDTO);
         userValidator.validate(newUser, bindingResult);
         if(bindingResult.hasErrors()){
             StringBuilder message = new StringBuilder();
@@ -51,33 +56,18 @@ public class AuthenticationController {
         AuthResponse response = new AuthResponse("Account created.", token, new Date());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> performLogin(@RequestBody AuthenticationDTO authenticationDTO){
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 authenticationDTO.getUsername(), authenticationDTO.getPassword());
-        authProvider.authenticate(authToken);
+        if(authProvider.authenticate(authToken).isAuthenticated()) {
 
-        String token = jwtUtil.generateToken(authenticationDTO.getUsername());
-        AuthResponse response = new AuthResponse("You are logged.", token, new Date());
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+            String token = jwtUtil.generateToken(authenticationDTO.getUsername());
+            AuthResponse response = new AuthResponse("You are logged.", token, new Date());
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        AuthResponse response = new AuthResponse("Username or password is incorrect!", "", new Date());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+     }
 
-
-//Exception handlers
-    @ExceptionHandler
-    private ResponseEntity<ExceptionResponse> exceptionHandler(UserNotCreateException e){
-        String prefix = "User not created: ";
-        ExceptionResponse response = new ExceptionResponse(
-                prefix + e.getMessage(),
-                new Date()
-        );
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-
-//Additional tools
-    private User convertToUser(RegistrationDTO registrationDTO){
-        return modelMapper.map(registrationDTO, User.class);
-    }
 }

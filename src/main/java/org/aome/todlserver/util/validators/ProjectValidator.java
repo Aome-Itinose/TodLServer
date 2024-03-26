@@ -21,7 +21,7 @@ public class ProjectValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         Project project = (Project) target;
-        if(projectsService.projectExist(project.getName())){
+        if(projectsService.isProjectExist(project.getName())){
             errors.rejectValue("name", "", String.format("Project '%s' already exist", project.getName()));
         }
     }
