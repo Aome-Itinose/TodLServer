@@ -29,9 +29,7 @@ public class JWTFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authentication");
         if (authHeader != null && !authHeader.isBlank() && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            if (token.isBlank()) {
-                handlerExceptionResolver.resolveException(request, response, null, new JWTVerificationException("JWT-token is blank"));
-            }else{
+            if (!token.isBlank()) {
                 try {
                     String username = jwtUtil.validateTokenAndRetrievedClaim(token);
                     UserDetails userDetails = usersDetailService.loadUserByUsername(username);
@@ -45,8 +43,6 @@ public class JWTFilter extends OncePerRequestFilter {
                     handlerExceptionResolver.resolveException(request, response, null, e);
                 }
             }
-        }else{
-            handlerExceptionResolver.resolveException(request, response, null, new JWTVerificationException("JWT-token is blank"));
         }
         filterChain.doFilter(request, response);
     }

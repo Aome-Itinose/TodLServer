@@ -2,6 +2,7 @@ package org.aome.todlserver.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aome.todlserver.dto.AuthenticationDTO;
 import org.aome.todlserver.dto.RegistrationDTO;
 import org.aome.todlserver.models.User;
@@ -24,6 +25,7 @@ import java.util.Date;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationController {
 
     private final UsersService usersService;
@@ -32,7 +34,6 @@ public class AuthenticationController {
     private final UserValidator userValidator;
     private final AuthenticationManager authProvider;
     private final Converter converter;
-
 
     @GetMapping("/some")
     public ResponseEntity<AuthResponse> some(){
@@ -54,6 +55,7 @@ public class AuthenticationController {
 
         String token = jwtUtil.generateToken(newUser.getUsername());
         AuthResponse response = new AuthResponse("Account created.", token, new Date());
+
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     @PostMapping("/login")
@@ -64,6 +66,7 @@ public class AuthenticationController {
 
             String token = jwtUtil.generateToken(authenticationDTO.getUsername());
             AuthResponse response = new AuthResponse("You are logged.", token, new Date());
+            log.info("Logged.");
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         AuthResponse response = new AuthResponse("Username or password is incorrect!", "", new Date());

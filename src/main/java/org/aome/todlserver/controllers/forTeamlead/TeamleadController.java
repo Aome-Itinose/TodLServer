@@ -7,7 +7,6 @@ import org.aome.todlserver.dto.compositeDTO.Project_User;
 import org.aome.todlserver.models.Project;
 import org.aome.todlserver.models.User;
 import org.aome.todlserver.services.ProjectsService;
-import org.aome.todlserver.services.UsersService;
 import org.aome.todlserver.util.Converter;
 import org.aome.todlserver.util.responses.EditResponse;
 import org.springframework.http.HttpStatus;
@@ -59,4 +58,5 @@ public class TeamleadController {
         String message = String.format("Project renamed to %s.", projectDTO.getName());
         return new ResponseEntity<>(new EditResponse(message, new Date()), HttpStatus.OK);
     }
+
 }

@@ -66,6 +66,7 @@ public class GlobalExceptionHandler {
                 "Token is incorrect.",
                 new Date()
         );
+
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(JWTVerificationException.class)

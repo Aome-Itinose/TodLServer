@@ -56,4 +56,5 @@ public class SeniorController {
         String message = String.format("Project '%s' is created.", project.getName());
         return new ResponseEntity<>(new EditResponse(message, new Date()), HttpStatus.OK);
     }
+
 }
